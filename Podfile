@@ -59,6 +59,10 @@ post_install do |installer|
             # 修复 YYKit 等老库在 Xcode 26 下的编译错误
             config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
             config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
+            # 关闭所有警告视为错误，兼容老库
+            config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
+            config.build_settings['SWIFT_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
+            config.build_settings['OTHER_CFLAGS'] = ['$(inherited)', '-Wno-error', '-w']
         end
     end
 end
