@@ -19,6 +19,10 @@ workflows:
       - name: 安装 CocoaPods 依赖
         script: |
           pod install
+
+      - name: 递增 Build Number
+        script: |
+          agvtool new-version -all $(($(agvtool what-version -terse) + 1))
           
       - name: 设置苹果自动签名
         script: |
