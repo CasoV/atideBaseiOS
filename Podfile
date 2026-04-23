@@ -61,6 +61,8 @@ post_install do |installer|
             config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
             config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
             config.build_settings['SWIFT_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
+            # 关键：直接关掉 Xcode 的 non-modular-include 错误检查
+            config.build_settings['CLANG_WARN_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'NO'
             config.build_settings['OTHER_CFLAGS'] = ['$(inherited)', '-Wno-error', '-w',
                 '-Wno-error=non-modular-include-in-framework-module',
                 '-Wno-error=deprecated-objc-isa-usage',
