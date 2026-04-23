@@ -1,5 +1,5 @@
 workspace 'PMPlatform_IOS.xcworkspace'
-project '../atideBaseiOS/PMPlatform_IOS.xcodeproj'
+project 'PMPlatform_IOS.xcodeproj'
 
 # Pods for ycxm
 target 'PMPlatform_IOS' do
