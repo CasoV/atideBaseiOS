@@ -4,8 +4,8 @@ workflows:
     # 使用苹果 M2 芯片的电脑打包，速度极快
     instance_type: mac_mini_m2 
     environment:
-      # 指定使用最新的 Xcode 16 (完美解决你的 SDK 版本过低问题)
-      xcode: 16.0 
+      # 苹果要求 2026年4月28日起必须使用 Xcode 26 + iOS 26 SDK
+      xcode: 26.4
       cocoapods: default
       ios_signing:
         distribution_type: app_store
