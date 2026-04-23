@@ -1,0 +1,59 @@
+
+/* 
+conference.strings
+ZegoEducation
+
+Created by Zego on 2020/8/3.
+Copyright © 2020 Shenzhen Zego Technology Company Limited. All rights reserved.
+*/
+
+"login" = "登录";
+"login_input_nickname" = "请输入入会昵称";
+"login_failed" = "登录失败";
+"login_failed_retry" = "登录失效，请重新登录";
+"login_get_sdk_token_failed" = "获取 token 失败";
+"quick_join" = "快速入会";
+"quick_join_input_id" = "请输入会议 ID";
+"quick_join_input_nickname" = "请输入入会昵称";
+"quick_join_room" = "快速加入会议";
+"quick_join_option" = "参会选项";
+"quick_join_failed_nickname_empty" = "入会昵称不能为空";
+"quick_join_failed_id_nickname_empty" = "入会ID/入会昵称不能为空";
+"quick_join_failed_nickname_exceed_limit" = "输入的字符数超出限制";
+"setting" = "设置";
+"setting_room" = "会议设置";
+"setting_custom_ui" = "自定义UI";
+"setting_version" = "版本号";
+"setting_upload_log" = "上传日志";
+"setting_upload_log_succeeded" = "上传日志成功";
+"setting_upload_log_failed" = "上传日志失败:%ld";
+"setting_logout" = "退出登录";
+"setting_room_mic_off_when_joining" = "加入时将麦克风静音";
+"setting_room_camera_off_when_joining" = "加入时将摄像头关闭";
+"setting_room_beautify" = "美颜";
+"setting_room_preview_mirror" = "预览画面视频镜像";
+"setting_room_video_fit" = "视频填充";
+"custom_ui_hide_bottom_bar" = "隐藏底部工具栏";
+"custom_ui_hide_chat" = "隐藏聊天按钮";
+"custom_ui_hide_member" = "隐藏成员按钮";
+"custom_ui_hide_share" = "隐藏共享按钮";
+"custom_ui_hide_camera" = "隐藏摄像头按钮";
+"custom_ui_hide_mic" = "隐藏麦克风按钮";
+"custom_ui_hide_more" = "隐藏更多按钮";
+"main_page" = "主页";
+"room_schedule" = "安排会议";
+"room_schedule_empty" = "暂无会议安排";
+"room_schedule_default_title_placeholder" = "%@创建的会议";
+"room_live_schedule_default_title_placeholder" = "%@创建的直播";
+"room_id" = "会议ID";
+"room_join" = "加入";
+"room_delete_succeeded" = "删除会议成功";
+"room_delete_failed" = "删除会议失败";
+"room_schedule_room_succeeded" = "安排会议成功";
+"room_schedule_failed" = "创建会议失败";
+"room_list_failed" = "获取会议列表失败";
+"room_join_failed" = "加入会议失败";
+"refresh_loading" = "加载中...";
+"refresh_pull_down" = "下拉刷新";
+"refresh_done" = "加载完成";
+"refresh_release_trigger" = "松开加载";

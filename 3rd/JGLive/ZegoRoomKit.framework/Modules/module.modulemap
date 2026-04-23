@@ -1,0 +1,6 @@
+framework module ZegoRoomKit {
+  umbrella header "ZegoRoomKit.h"
+
+  export *
+  module * { export * }
+}

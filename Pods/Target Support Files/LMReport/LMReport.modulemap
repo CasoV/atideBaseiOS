@@ -1,0 +1,6 @@
+framework module LMReport {
+  umbrella header "LMReport-umbrella.h"
+
+  export *
+  module * { export * }
+}

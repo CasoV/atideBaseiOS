@@ -1,0 +1,6 @@
+framework module RoomkitDC {
+  umbrella header "RoomkitDC.h"
+
+  export *
+  module * { export * }
+}

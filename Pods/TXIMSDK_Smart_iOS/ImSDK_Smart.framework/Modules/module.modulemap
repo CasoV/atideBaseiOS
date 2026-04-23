@@ -1,0 +1,6 @@
+framework module ImSDK_Smart {
+  umbrella header "ImSDK_Smart.h"
+
+  export *
+  module * { export * }
+}

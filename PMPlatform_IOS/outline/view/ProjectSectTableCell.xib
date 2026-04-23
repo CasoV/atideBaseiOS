@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="tablecell" id="KGk-i7-Jjw" customClass="ProjectSectTableCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="check_normal_label" translatesAutoresizingMaskIntoConstraints="NO" id="efE-bd-u9x">
+                        <rect key="frame" x="5" y="8" width="27.5" height="27.5"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="efE-bd-u9x" secondAttribute="height" id="JcV-St-pZS"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0cU-u0-n9Q">
+                        <rect key="frame" x="37.5" y="0.0" width="277.5" height="43.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="0cU-u0-n9Q" secondAttribute="bottom" id="1oE-9M-oX6"/>
+                    <constraint firstAttribute="bottom" secondItem="efE-bd-u9x" secondAttribute="bottom" constant="8" id="5nW-a6-x8H"/>
+                    <constraint firstItem="efE-bd-u9x" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="5" id="OBI-Kr-rDX"/>
+                    <constraint firstItem="efE-bd-u9x" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="U0Y-sk-F7g"/>
+                    <constraint firstItem="0cU-u0-n9Q" firstAttribute="leading" secondItem="efE-bd-u9x" secondAttribute="trailing" constant="5" id="dKD-14-s2N"/>
+                    <constraint firstItem="0cU-u0-n9Q" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="hJa-qY-jK4"/>
+                    <constraint firstAttribute="trailing" secondItem="0cU-u0-n9Q" secondAttribute="trailing" constant="5" id="vg1-Av-K91"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
+            <connections>
+                <outlet property="imageUI" destination="efE-bd-u9x" id="YHO-fI-aUx"/>
+                <outlet property="textUI" destination="0cU-u0-n9Q" id="FqW-43-COK"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="check_normal_label" width="16" height="16"/>
+    </resources>
+</document>

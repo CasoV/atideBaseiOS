@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22154" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22130"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Video Chat View Controller-->
+        <scene sceneID="BAy-cY-xq1">
+            <objects>
+                <viewController restorationIdentifier="VideoChat" storyboardIdentifier="VideoChat" id="AmP-jJ-hub" customClass="ZGVideoChatViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="x8z-Y1-OlX"/>
+                        <viewControllerLayoutGuide type="bottom" id="Wu7-1n-LoQ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="TNl-d6-y9h">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RMu-xQ-FLk">
+                                <rect key="frame" x="0.0" y="48" width="414" height="848"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D1u-bi-Ti8">
+                                <rect key="frame" x="163" y="762" width="88" height="50"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="0m8-tx-2kn"/>
+                                    <constraint firstAttribute="width" constant="88" id="DQa-1d-D9T"/>
+                                </constraints>
+                                <state key="normal" image="guaduandianhua-2">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="stopButnClicked:" destination="AmP-jJ-hub" eventType="touchUpInside" id="aPZ-T3-TyV"/>
+                                </connections>
+                            </button>
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sy8-ND-7Tt">
+                                <rect key="frame" x="286" y="138" width="108" height="192"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="192" id="As8-18-CUt"/>
+                                    <constraint firstAttribute="width" secondItem="sy8-ND-7Tt" secondAttribute="height" multiplier="9:16" id="e5Y-gs-gOv"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ran-uO-Kiz">
+                                <rect key="frame" x="53" y="762" width="50" height="50"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="gii-WB-edj"/>
+                                    <constraint firstAttribute="width" constant="50" id="q0q-w1-A5G"/>
+                                </constraints>
+                                <state key="normal" image="sxtqh">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="cameraChange:" destination="AmP-jJ-hub" eventType="touchUpInside" id="vdb-iQ-40r"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Isd-T5-1gl">
+                                <rect key="frame" x="311" y="762" width="50" height="50"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="50" id="Rwo-d7-AsV"/>
+                                    <constraint firstAttribute="height" constant="50" id="loK-UZ-1Qg"/>
+                                </constraints>
+                                <state key="normal" image="hsqh">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="fxchange:" destination="AmP-jJ-hub" eventType="touchUpInside" id="gaQ-6G-kLt"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="D1u-bi-Ti8" firstAttribute="leading" secondItem="Ran-uO-Kiz" secondAttribute="trailing" constant="60" id="2CA-xk-Oy0"/>
+                            <constraint firstItem="Wu7-1n-LoQ" firstAttribute="top" secondItem="Ran-uO-Kiz" secondAttribute="bottom" constant="50" id="2fL-90-oJQ"/>
+                            <constraint firstItem="RMu-xQ-FLk" firstAttribute="top" secondItem="x8z-Y1-OlX" secondAttribute="bottom" id="Cne-Se-fXR"/>
+                            <constraint firstItem="Isd-T5-1gl" firstAttribute="leading" secondItem="D1u-bi-Ti8" secondAttribute="trailing" constant="60" id="ETu-SO-kEF"/>
+                            <constraint firstAttribute="bottom" secondItem="RMu-xQ-FLk" secondAttribute="bottom" id="QWY-ei-Lo5"/>
+                            <constraint firstItem="sy8-ND-7Tt" firstAttribute="trailing" secondItem="TNl-d6-y9h" secondAttribute="trailingMargin" id="Zwx-lE-Dgd"/>
+                            <constraint firstItem="sy8-ND-7Tt" firstAttribute="top" secondItem="x8z-Y1-OlX" secondAttribute="bottom" constant="90" id="Zzs-7o-2z7"/>
+                            <constraint firstItem="Wu7-1n-LoQ" firstAttribute="top" secondItem="D1u-bi-Ti8" secondAttribute="bottom" constant="50" id="bbx-k0-Iyo"/>
+                            <constraint firstAttribute="trailing" secondItem="RMu-xQ-FLk" secondAttribute="trailing" id="nze-v4-rLK"/>
+                            <constraint firstItem="Wu7-1n-LoQ" firstAttribute="top" secondItem="Isd-T5-1gl" secondAttribute="bottom" constant="50" id="pTB-09-2dz"/>
+                            <constraint firstItem="D1u-bi-Ti8" firstAttribute="centerX" secondItem="TNl-d6-y9h" secondAttribute="centerX" id="uUg-cY-xp9"/>
+                            <constraint firstItem="RMu-xQ-FLk" firstAttribute="leading" secondItem="TNl-d6-y9h" secondAttribute="leading" id="wel-zA-rjK"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="camChangeBtn" destination="Ran-uO-Kiz" id="BGm-3a-kxJ"/>
+                        <outlet property="fxChangeBtn" destination="Isd-T5-1gl" id="75Y-zz-fqC"/>
+                        <outlet property="playView" destination="sy8-ND-7Tt" id="aCG-Cw-nKg"/>
+                        <outlet property="previewView" destination="RMu-xQ-FLk" id="VDe-RR-U4q"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1tf-nS-hxF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1971.0144927536232" y="64.955357142857139"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="guaduandianhua-2" width="50" height="50"/>
+        <image name="hsqh" width="100" height="100"/>
+        <image name="sxtqh" width="100" height="100"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

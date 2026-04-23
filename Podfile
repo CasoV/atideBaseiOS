@@ -1,0 +1,61 @@
+workspace 'PMPlatform_IOS.xcworkspace'
+project '../atideBaseiOS/PMPlatform_IOS.xcodeproj'
+
+# Pods for ycxm
+target 'PMPlatform_IOS' do
+    source 'https://github.com/CocoaPods/Specs.git'
+    platform :ios, '9.0'
+    use_frameworks!
+    pod 'MJRefresh'
+    pod 'MJExtension'
+    pod 'PPBadgeView'
+    pod 'SVProgressHUD'
+    pod 'Charts'
+    pod 'Masonry', '~> 1.1.0'
+    pod 'RATreeView', '~> 2.1.2'
+    pod 'SDWebImage', '5.18.2'
+    pod 'YTKNetwork'
+    pod 'AFViewShaker', '~> 0.0.4'
+    pod 'CocoaLumberjack', '~> 3.3.0'
+    pod 'SDCycleScrollView', '~> 1.75'
+    pod 'IQKeyboardManager', '6.5.11'
+    pod 'TZImagePickerController', '~> 3.0'
+    pod 'GrowingTextView', '~> 0.6.1'
+    pod 'AMapLocation-NO-IDFA' #无IDFA版定位 SDK
+    pod 'AMap3DMap-NO-IDFA' #2D地图SDK
+    
+    pod 'Moya'
+    pod 'SwiftyJSON'
+    pod 'ESTabBarController-swift'
+    pod 'LLCycleScrollView'
+    pod 'GYSide'
+    pod 'LYEmptyView'
+    pod 'LMReport'
+    pod 'MBProgressHUD', :git => 'https://github.com/jdg/MBProgressHUD.git', :commit => '18c442d57398cee5ef57f852df10fc5ff65f0763'
+    
+    pod 'YYKit', '1.0.9'
+    pod 'LEEAlert', '1.4.2'
+    pod 'ReactiveObjC', '3.1.1'
+    pod 'SSZipArchive', '2.2.2'
+    pod 'TXIMSDK_Smart_iOS', '5.1.138'
+    pod 'AFNetworking', '4.0.1'
+    pod 'lottie-ios', '2.5.3'
+    pod 'SlideMenuControllerOC'
+end
+
+
+pre_install do |installer|
+    def installer.verify_no_static_framework_transitive_dependencies; end
+end
+
+post_install do |installer|
+    installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+            config.build_settings['SWIFT_VERSION'] = '5.0'
+        end
+    end
+end
+#unable UUID
+install! 'cocoapods',
+         :deterministic_uuids => false
+

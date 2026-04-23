@@ -1,0 +1,65 @@
+//
+//  DirectorySelectionCell.m
+//  ycxm
+//
+//  Created by 高小伟 on 2020/7/9.
+//  Copyright © 2020 末末班车. All rights reserved.
+//
+
+#import "DirectorySelectionCell.h"
+
+@interface DirectorySelectionCell ()
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *leftViewWidth;
+@property (weak, nonatomic) IBOutlet UIButton *checkBtn;
+
+@end
+
+@implementation DirectorySelectionCell
+
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    // Initialization code
+    self.selectionStyle = UITableViewCellSelectionStyleNone;
+}
+
++ (instancetype)treeViewCellWith:(RATreeView *)treeView {
+    DirectorySelectionCell *cell = [treeView dequeueReusableCellWithIdentifier:@"DirectorySelectionCell"];
+    if (cell == nil) {
+        cell = [[[NSBundle mainBundle] loadNibNamed:@"DirectorySelectionCell" owner:nil options:nil] firstObject];
+    }
+    return cell;
+}
+
+- (void)setCellBasicInfoWith:(DatumModel *)model level:(NSInteger)level children:(NSInteger )children{
+    _model = model;
+    if (children == 0) {
+//        self.checkBtn.hidden = NO;
+        self.expandImg.hidden = YES;
+    } else {
+//        self.checkBtn.hidden = YES;
+        self.expandImg.hidden = NO;
+    }
+    
+    if (model.isExpanded) {
+        self.expandImg.image = [UIImage imageNamed:@"ic_arrow_bottom_black"];
+    } else {
+        self.expandImg.image = [UIImage imageNamed:@"ic_arrow_right_black"];
+    }
+    
+    
+    self.title.text = model.text;
+    
+    //每一层的布局
+    CGFloat left = level * 10;
+    self.leftViewWidth.constant = left;
+}
+
+- (IBAction)checkBtnClicked:(id)sender {
+    if (self.callBack) {
+        self.callBack(self.model);
+    }
+}
+
+
+@end

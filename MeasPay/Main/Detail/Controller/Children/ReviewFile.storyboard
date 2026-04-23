@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Review File Vc-->
+        <scene sceneID="82Z-PD-3da">
+            <objects>
+                <viewController storyboardIdentifier="ReviewFileVc" id="uTC-WD-OaZ" customClass="ReviewFileVc" customModule="YXPrjMng" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="toL-id-oWA">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="附件详情" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sxh-dI-chv">
+                                <rect key="frame" x="69" y="40" width="89.5" height="27"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="27" id="4YF-1D-bL1"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TqZ-NS-Brs">
+                                <rect key="frame" x="0.0" y="34" width="61" height="38"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="61" id="KZs-OJ-Btn"/>
+                                    <constraint firstAttribute="height" constant="38" id="wRc-yL-Kpn"/>
+                                </constraints>
+                                <state key="normal" image="back"/>
+                                <connections>
+                                    <action selector="back:" destination="uTC-WD-OaZ" eventType="touchUpInside" id="X3N-V0-N5c"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iuq-NQ-RRt">
+                                <rect key="frame" x="0.0" y="80" width="375" height="1"/>
+                                <color key="backgroundColor" red="0.82745098039999998" green="0.82745098039999998" blue="0.82745098039999998" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="1" id="GGX-VS-fB0"/>
+                                </constraints>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="shadowColor">
+                                        <color key="value" white="0.88" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="iuq-NQ-RRt" firstAttribute="top" secondItem="TqZ-NS-Brs" secondAttribute="bottom" constant="8" id="1VD-Y5-mwW"/>
+                            <constraint firstItem="Sxh-dI-chv" firstAttribute="top" secondItem="3LN-M0-e4d" secondAttribute="top" constant="20" id="3cF-qz-Pm2"/>
+                            <constraint firstItem="Sxh-dI-chv" firstAttribute="leading" secondItem="TqZ-NS-Brs" secondAttribute="trailing" constant="8" id="Kuk-oC-acV"/>
+                            <constraint firstItem="iuq-NQ-RRt" firstAttribute="leading" secondItem="toL-id-oWA" secondAttribute="leading" id="Rf7-7P-DFK"/>
+                            <constraint firstItem="TqZ-NS-Brs" firstAttribute="top" secondItem="3LN-M0-e4d" secondAttribute="top" constant="14" id="hgW-UY-Rcd"/>
+                            <constraint firstAttribute="trailing" secondItem="iuq-NQ-RRt" secondAttribute="trailing" id="knJ-TO-fNf"/>
+                            <constraint firstItem="TqZ-NS-Brs" firstAttribute="leading" secondItem="3LN-M0-e4d" secondAttribute="leading" id="mrl-fa-QlV"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="3LN-M0-e4d"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="LHR-Zv-67n" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4" y="-63.418290854572717"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="back" width="25" height="25"/>
+    </resources>
+</document>

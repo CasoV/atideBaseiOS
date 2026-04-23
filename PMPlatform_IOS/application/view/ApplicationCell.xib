@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="applicationCell" id="uzd-cv-kle" customClass="ApplicationCell">
+            <rect key="frame" x="0.0" y="0.0" width="125" height="90"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                <rect key="frame" x="0.0" y="0.0" width="125" height="90"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4VF-WO-0Qd">
+                        <rect key="frame" x="125" y="0.0" width="2" height="90"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="2" id="NNU-DR-ujl"/>
+                        </constraints>
+                    </view>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3Ra-Dc-R8a">
+                        <rect key="frame" x="0.0" y="0.0" width="125" height="90"/>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OxX-Pi-icr">
+                        <rect key="frame" x="0.0" y="64.5" width="125" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="rse-iU-mtK"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ory-tC-gH4">
+                        <rect key="frame" x="40" y="12.5" width="45" height="45"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="45" id="CVC-n9-89M"/>
+                            <constraint firstAttribute="width" constant="45" id="duU-vC-sIe"/>
+                        </constraints>
+                    </imageView>
+                </subviews>
+            </view>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="OxX-Pi-icr" firstAttribute="centerY" secondItem="uzd-cv-kle" secondAttribute="centerY" constant="30" id="2sP-JI-xWy"/>
+                <constraint firstItem="3Ra-Dc-R8a" firstAttribute="top" secondItem="uzd-cv-kle" secondAttribute="top" id="33f-TF-UbE"/>
+                <constraint firstItem="ory-tC-gH4" firstAttribute="centerX" secondItem="uzd-cv-kle" secondAttribute="centerX" id="9PN-1o-0br"/>
+                <constraint firstItem="OxX-Pi-icr" firstAttribute="leading" secondItem="uzd-cv-kle" secondAttribute="leading" id="AUY-Zd-7Cu"/>
+                <constraint firstItem="4VF-WO-0Qd" firstAttribute="top" secondItem="uzd-cv-kle" secondAttribute="top" id="ID9-ZG-MK0"/>
+                <constraint firstItem="ory-tC-gH4" firstAttribute="centerY" secondItem="uzd-cv-kle" secondAttribute="centerY" constant="-10" id="Is5-jt-ier"/>
+                <constraint firstAttribute="trailing" secondItem="4VF-WO-0Qd" secondAttribute="trailing" constant="-2" id="V54-xM-fWq"/>
+                <constraint firstAttribute="bottom" secondItem="3Ra-Dc-R8a" secondAttribute="bottom" id="XLb-p0-zpc"/>
+                <constraint firstAttribute="trailing" secondItem="OxX-Pi-icr" secondAttribute="trailing" id="b9r-ec-NjH"/>
+                <constraint firstAttribute="bottom" secondItem="4VF-WO-0Qd" secondAttribute="bottom" id="etf-GK-OMv"/>
+                <constraint firstAttribute="trailing" secondItem="3Ra-Dc-R8a" secondAttribute="trailing" id="lK3-MM-D6P"/>
+                <constraint firstItem="3Ra-Dc-R8a" firstAttribute="leading" secondItem="uzd-cv-kle" secondAttribute="leading" id="sTJ-p3-Tx0"/>
+            </constraints>
+            <connections>
+                <outlet property="bgImageView" destination="3Ra-Dc-R8a" id="JeM-54-ors"/>
+                <outlet property="iconImageView" destination="ory-tC-gH4" id="A0k-Nf-Nb9"/>
+                <outlet property="titleLabel" destination="OxX-Pi-icr" id="LGu-db-0k7"/>
+            </connections>
+        </collectionViewCell>
+    </objects>
+</document>
