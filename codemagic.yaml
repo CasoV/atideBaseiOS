@@ -22,10 +22,7 @@ workflows:
           
       - name: 设置苹果自动签名
         script: |
-          # 为每个 target 分别匹配对应的 Provisioning Profile
-          xcode-project use-profiles \
-            --targets PMPlatform_IOS \
-            --targets ScreenShare
+          xcode-project use-profiles
           
       - name: 编译并打包生成 IPA
         script: |
