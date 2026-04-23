@@ -9,9 +9,7 @@ workflows:
       cocoapods: default
       ios_signing:
         distribution_type: app_store
-        bundle_identifiers:
-          - com.atide.constructionappBase
-          - com.atide.constructionappBase.ScreenShare
+        bundle_identifier: com.atide.constructionappBase
     
     # 【重要】自动签名，需要你在 Codemagic 后台绑定苹果 API Key
     integrations:
