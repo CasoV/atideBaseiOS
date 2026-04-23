@@ -26,8 +26,7 @@ workflows:
           # 已经为你修改为 workspace 模式，并填入了正确的名称
           xcode-project build-ipa \
             --workspace "PMPlatform_IOS.xcworkspace" \
-            --scheme "PMPlatform_IOS" \
-            --distribution-type app-store
+            --scheme "PMPlatform_IOS"
 
     artifacts:
       # 告诉 Codemagic 把生成的 ipa 安装包保存下来
