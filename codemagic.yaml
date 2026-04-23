@@ -1,0 +1,41 @@
+workflows:
+  ios-app-store-build:
+    name: iOS App Store Build
+    # 使用苹果 M2 芯片的电脑打包，速度极快
+    instance_type: mac_mini_m2 
+    environment:
+      # 指定使用最新的 Xcode 16 (完美解决你的 SDK 版本过低问题)
+      xcode: 16.0 
+      cocoapods: default
+    
+    # 【重要】自动签名，需要你在 Codemagic 后台绑定苹果 API Key
+    integrations:
+      app_store_connect: Codemagic
+      
+    scripts:
+      - name: 安装 CocoaPods 依赖
+        script: |
+          pod install
+          
+      - name: 设置苹果自动签名
+        script: |
+          xcode-project use-profiles
+          
+      - name: 编译并打包生成 IPA
+        script: |
+          # 已经为你修改为 workspace 模式，并填入了正确的名称
+          xcode-project build-ipa \
+            --workspace "PMPlatform_IOS.xcworkspace" \
+            --scheme "PMPlatform_IOS" \
+            --distribution-type app-store
+
+    artifacts:
+      # 告诉 Codemagic 把生成的 ipa 安装包保存下来
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      # 自动上传到苹果 App Store Connect 后台
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
