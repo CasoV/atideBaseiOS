@@ -10,6 +10,7 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.atide.constructionappBase
+        create_signing_certificate: true
     
     # 【重要】自动签名，需要你在 Codemagic 后台绑定苹果 API Key
     integrations:
