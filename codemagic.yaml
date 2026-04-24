@@ -35,10 +35,18 @@ workflows:
           
       - name: 编译并打包生成 IPA
         script: |
+          xcodebuild \
+            -workspace "PMPlatform_IOS.xcworkspace" \
+            -scheme "PMPlatform_IOS" \
+            -configuration Release \
+            -archivePath build/ios/xcarchive/PMPlatform_IOS.xcarchive \
+            archive \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            OTHER_LDFLAGS='$(inherited) -ld_classic'
+          
           xcode-project build-ipa \
             --workspace "PMPlatform_IOS.xcworkspace" \
-            --scheme "PMPlatform_IOS" \
-            --xcargs "OTHER_LDFLAGS='\$(inherited) -ld_classic'"
+            --scheme "PMPlatform_IOS"
 
     artifacts:
       # 告诉 Codemagic 把生成的 ipa 安装包保存下来
