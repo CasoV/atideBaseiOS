@@ -36,7 +36,10 @@ workflows:
 
       - name: 递增 Build Number
         script: |
-          agvtool new-version -all $(($(agvtool what-version -terse) + 1))
+          BUILD_NUMBER=$(agvtool what-version -terse)
+          NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
+          agvtool new-version -all $NEW_BUILD_NUMBER
+          echo "Build Number: $BUILD_NUMBER -> $NEW_BUILD_NUMBER"
           
       - name: 设置苹果自动签名
         script: |
