@@ -45,41 +45,9 @@ workflows:
           
       - name: 编译并打包生成 IPA
         script: |
-          # 第一步：只做 Archive，不导出 IPA
-          xcodebuild archive \
-            -workspace "PMPlatform_IOS.xcworkspace" \
-            -scheme "PMPlatform_IOS" \
-            -configuration Release \
-            -archivePath "build/ios/xcarchive/PMPlatform_IOS.xcarchive" \
-            -destination "generic/platform=iOS" \
-            CODE_SIGN_STYLE=Automatic \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            | xcpretty
-
-          # 第二步：注入 PrivacyInfo.xcprivacy 到 xcarchive 内各 SDK framework
-          # 在签名之前注入，避免破坏签名
-          ARCHIVE_FW="build/ios/xcarchive/PMPlatform_IOS.xcarchive/Products/Applications/PMPlatform_IOS.app/Frameworks"
-          echo "开始注入 PrivacyInfo.xcprivacy，Frameworks 目录: $ARCHIVE_FW"
-          INJECTED=0
-          for sdk in AFNetworking Alamofire Charts IQKeyboardManager Kingfisher SDWebImage SVProgressHUD SwiftyJSON; do
-            FW="$ARCHIVE_FW/${sdk}.framework"
-            if [ -d "$FW" ]; then
-              if [ ! -f "$FW/PrivacyInfo.xcprivacy" ]; then
-                cp "PrivacyManifests/${sdk}.xcprivacy" "$FW/PrivacyInfo.xcprivacy"
-                echo "✅ 注入: ${sdk}.framework/PrivacyInfo.xcprivacy"
-                INJECTED=$((INJECTED + 1))
-              else
-                echo "ℹ️  已存在: ${sdk}.framework/PrivacyInfo.xcprivacy"
-              fi
-            else
-              echo "⚠️  未找到: ${sdk}.framework"
-            fi
-          done
-          echo "共注入 $INJECTED 个 framework"
-
-          # 第三步：从注入后的 xcarchive 导出 IPA（Codemagic 会处理签名）
           xcode-project build-ipa \
-            --archive-path "build/ios/xcarchive/PMPlatform_IOS.xcarchive"
+            --workspace "PMPlatform_IOS.xcworkspace" \
+            --scheme "PMPlatform_IOS"
 
     artifacts:
       # 告诉 Codemagic 把生成的 ipa 安装包保存下来

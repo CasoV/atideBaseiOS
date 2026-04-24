@@ -52,6 +52,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		298BA268B758B78E6653733F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0453823427063C5F1B9AEB0A /* PrivacyInfo.xcprivacy */; };
+		3D8E9F54E9556A407FB7F354 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6089971E9509795E3FFFE67F /* PrivacyInfo.xcprivacy */; };
 		3E4280CA2D79786600E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E4280C92D79786600E4513B /* PrivacyInfo.xcprivacy */; };
 		3E4280D72D797DBE00E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E4280CB2D7978EC00E4513B /* PrivacyInfo.xcprivacy */; };
 		3E4280D82D797DD300E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E4280CD2D79795D00E4513B /* PrivacyInfo.xcprivacy */; };
@@ -1418,6 +1420,8 @@
 		46EB2E0000D3A0 /* Pods-PMPlatform_IOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB2E0000D390 /* Pods-PMPlatform_IOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		46EB2E0000D400 /* Pods-PMPlatform_IOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 46EB2E0000D3F0 /* Pods-PMPlatform_IOS-dummy.m */; };
 		46EB2E0000D930 /* MBProgressHUD-MBProgressHUD in Resources */ = {isa = PBXBuildFile; fileRef = 6EFB05F1F29FAD078E29A839C5020799 /* MBProgressHUD-MBProgressHUD */; };
+		93E865B7B75A164498EFCB75 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8DF8F1BDB71F6A37A75DADA0 /* PrivacyInfo.xcprivacy */; };
+		EB4AEA4E8B739D21C9214B9D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 35A99B54DC3E82BDFE7E82BD /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1739,6 +1743,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0453823427063C5F1B9AEB0A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		0461B3F80FC05957690727254D64DB36 /* Result */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Result; path = Result.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DE46762C16AFA797BDAAD77C77D762A /* PPBadgeView */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PPBadgeView; path = PPBadgeView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		16427E92326DD9D7A544B4EC641BBCB1 /* LEEAlert */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = LEEAlert; path = LEEAlert.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1746,6 +1751,7 @@
 		24D23D6981311F14544FA6018DBA03B0 /* Pods-PMPlatform_IOS */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-PMPlatform_IOS"; path = Pods_PMPlatform_IOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B276B0A79173A1D6E83C9B4FB9A4A57 /* MJExtension */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MJExtension; path = MJExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		300066CD324C2258532CE632B14315D9 /* SlideMenuControllerOC */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SlideMenuControllerOC; path = SlideMenuControllerOC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		35A99B54DC3E82BDFE7E82BD /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3756A9BBE41ABEE8DCBF5BCA6972C4DA /* Moya */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Moya; path = Moya.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E4280C92D79786600E4513B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3E4280CB2D7978EC00E4513B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Source/Charts/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -3354,10 +3360,12 @@
 		5B4CCE945DA52B68861D70271B3A9267 /* RATreeView */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = RATreeView; path = RATreeView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D797E9A5C5782CE845840781FA1CC81 /* Alamofire */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Alamofire; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		601EEA66C9A6080A11C1ADE5E2A91AE1 /* YTKNetwork */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = YTKNetwork; path = YTKNetwork.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6089971E9509795E3FFFE67F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		66F375081A2D8BFA9FAA5DE589BB3469 /* LLCycleScrollView */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = LLCycleScrollView; path = LLCycleScrollView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EFB05F1F29FAD078E29A839C5020799 /* MBProgressHUD-MBProgressHUD */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "MBProgressHUD-MBProgressHUD"; path = MBProgressHUD.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B6CF5C20C32EE9F7F0862FF892524DE /* SDCycleScrollView */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SDCycleScrollView; path = SDCycleScrollView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B8FAB0D627B17EDE1366984278705D9 /* MBProgressHUD */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MBProgressHUD; path = MBProgressHUD.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DF8F1BDB71F6A37A75DADA0 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		8E1D5C0FCA0D872C3F21E87F25420681 /* TZImagePickerController */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = TZImagePickerController; path = TZImagePickerController.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		91B23470DEB9A986332BEB5034234BC7 /* SSZipArchive */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SSZipArchive; path = SSZipArchive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9621C6383F5733C35183B2DE886C7EC6 /* ReactiveObjC */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = ReactiveObjC; path = ReactiveObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3973,6 +3981,7 @@
 				3E4280CB2D7978EC00E4513B /* PrivacyInfo.xcprivacy */,
 				46EB2E00000C00 /* Core */,
 				46EB2E00006970 /* Support Files */,
+				0453823427063C5F1B9AEB0A /* PrivacyInfo.xcprivacy */,
 			);
 			path = Charts;
 			sourceTree = "<group>";
@@ -4059,6 +4068,7 @@
 				46EB2E000017E0 /* IQUIViewController+Additions.h */,
 				46EB2E000017F0 /* IQUIViewController+Additions.m */,
 				46EB2E000073F0 /* Support Files */,
+				8DF8F1BDB71F6A37A75DADA0 /* PrivacyInfo.xcprivacy */,
 			);
 			path = IQKeyboardManager;
 			sourceTree = "<group>";
@@ -4092,6 +4102,7 @@
 				46EB2E00001A70 /* ThreadHelper.swift */,
 				46EB2E00001A80 /* UIButton+Kingfisher.swift */,
 				46EB2E000076B0 /* Support Files */,
+				6089971E9509795E3FFFE67F /* PrivacyInfo.xcprivacy */,
 			);
 			path = Kingfisher;
 			sourceTree = "<group>";
@@ -4671,6 +4682,7 @@
 				3E4280D52D797B8E00E4513B /* PrivacyInfo.xcprivacy */,
 				46EB2E00003F70 /* SwiftyJSON.swift */,
 				46EB2E0000B400 /* Support Files */,
+				35A99B54DC3E82BDFE7E82BD /* PrivacyInfo.xcprivacy */,
 			);
 			path = SwiftyJSON;
 			sourceTree = "<group>";
@@ -7776,6 +7788,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E4280D72D797DBE00E4513B /* PrivacyInfo.xcprivacy in Resources */,
+				298BA268B758B78E6653733F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7813,6 +7826,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E4280D82D797DD300E4513B /* PrivacyInfo.xcprivacy in Resources */,
+				93E865B7B75A164498EFCB75 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7821,6 +7835,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E4280D92D797DF900E4513B /* PrivacyInfo.xcprivacy in Resources */,
+				3D8E9F54E9556A407FB7F354 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7970,6 +7985,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E4280DC2D797E1E00E4513B /* PrivacyInfo.xcprivacy in Resources */,
+				EB4AEA4E8B739D21C9214B9D /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
