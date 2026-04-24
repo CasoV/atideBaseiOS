@@ -34,6 +34,7 @@ target 'PMPlatform_IOS' do
     pod 'MBProgressHUD', :git => 'https://github.com/jdg/MBProgressHUD.git', :commit => '18c442d57398cee5ef57f852df10fc5ff65f0763'
     
     pod 'YYKit', '1.0.9'
+    pod 'libwebp'
     pod 'LEEAlert', '1.4.2'
     pod 'ReactiveObjC', '3.1.1'
     pod 'SSZipArchive', '2.2.2'
@@ -68,9 +69,12 @@ post_install do |installer|
                 '-Wno-error=implicit-function-declaration',
                 '-Wno-error=return-type',
                 '-Wno-error=objc-root-class']
-            # 移除 YYKit 对旧版 WebP.framework 的链接依赖
+            # 移除 YYKit 对旧版 WebP.framework 的链接依赖，改用 libwebp
             if target.name == 'YYKit'
-                config.build_settings['OTHER_LDFLAGS'] = ['$(inherited)']
+                ldflags = config.build_settings['OTHER_LDFLAGS'] || ['$(inherited)']
+                ldflags = [ldflags] if ldflags.is_a?(String)
+                ldflags.reject! { |f| f.include?('WebP') }
+                config.build_settings['OTHER_LDFLAGS'] = ldflags
                 frameworks = config.build_settings['FRAMEWORK_SEARCH_PATHS'] || ['$(inherited)']
                 frameworks = [frameworks] if frameworks.is_a?(String)
                 frameworks.reject! { |f| f.include?('Vendor') }
