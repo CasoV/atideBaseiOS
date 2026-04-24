@@ -24,6 +24,15 @@ workflows:
             sed -i '' 's/ -framework "WebP"//g' "$f"
             sed -i '' 's|"${PODS_ROOT}/YYKit/Vendor"||g' "$f"
           done
+          # 为主 target 添加 -ld_classic 兼容旧版静态库 libbexbankcard.a
+          ruby -e "
+            file = 'PMPlatform_IOS.xcodeproj/project.pbxproj'
+            content = File.read(file)
+            content.gsub!(/OTHER_LDFLAGS = \(/) { 'OTHER_LDFLAGS = (\"-ld_classic\",' }
+            content.gsub!(/OTHER_LDFLAGS = \"\"/) { 'OTHER_LDFLAGS = \"-ld_classic\"' }
+            File.write(file, content)
+          "
+          echo "已添加 -ld_classic 到主 target"
 
       - name: 递增 Build Number
         script: |
@@ -35,15 +44,6 @@ workflows:
           
       - name: 编译并打包生成 IPA
         script: |
-          xcodebuild \
-            -workspace "PMPlatform_IOS.xcworkspace" \
-            -scheme "PMPlatform_IOS" \
-            -configuration Release \
-            -archivePath build/ios/xcarchive/PMPlatform_IOS.xcarchive \
-            archive \
-            COMPILER_INDEX_STORE_ENABLE=NO \
-            OTHER_LDFLAGS='$(inherited) -ld_classic'
-          
           xcode-project build-ipa \
             --workspace "PMPlatform_IOS.xcworkspace" \
             --scheme "PMPlatform_IOS"
