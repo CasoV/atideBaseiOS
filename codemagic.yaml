@@ -33,6 +33,39 @@ workflows:
             File.write(file, content)
           "
           echo "已添加 -ld_classic 到主 target"
+          # 修复 ITMS-91061：pod install 会重新生成 Pods.xcodeproj，需要在此之后重新注入
+          # 将 PrivacyInfo.xcprivacy 加入各 SDK target 的 Copy Bundle Resources
+          ruby -e "
+            require 'xcodeproj'
+            sdks = %w[AFNetworking Alamofire Charts IQKeyboardManager Kingfisher SDWebImage SVProgressHUD SwiftyJSON]
+            project = Xcodeproj::Project.open('Pods/Pods.xcodeproj')
+            sdks.each do |sdk|
+              src = \"PrivacyManifests/#{sdk}.xcprivacy\"
+              next unless File.exist?(src)
+              target = project.targets.find { |t| t.name == sdk }
+              unless target
+                puts \"⚠️  未找到 target: #{sdk}\"
+                next
+              end
+              dest_dir = \"Pods/#{sdk}\"
+              next unless Dir.exist?(dest_dir)
+              dest = \"#{dest_dir}/PrivacyInfo.xcprivacy\"
+              FileUtils.cp(src, dest)
+              group = project.main_group.recursive_children.find { |g|
+                g.is_a?(Xcodeproj::Project::Object::PBXGroup) && g.display_name == sdk
+              }
+              unless group
+                puts \"⚠️  未找到 group: #{sdk}\"
+                next
+              end
+              file_ref = group.files.find { |f| f.path == 'PrivacyInfo.xcprivacy' }
+              file_ref ||= group.new_file('PrivacyInfo.xcprivacy')
+              already = target.resources_build_phase.files.any? { |f| f.file_ref == file_ref }
+              target.resources_build_phase.add_file_reference(file_ref) unless already
+              puts \"✅ #{sdk}: PrivacyInfo.xcprivacy 已加入 Copy Bundle Resources\"
+            end
+            project.save
+          "
 
       - name: 递增 Build Number
         script: |
