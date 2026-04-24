@@ -19,7 +19,7 @@ workflows:
       - name: 安装 CocoaPods 依赖
         script: |
           pod install
-          # 删除 YYKit 内置的旧版 WebP 预编译库，避免与 iOS 26 SDK 不兼容
+          # 删除 YYKit 内置的旧版 WebP 预编译库，避免与 iOS 26 SDK 链接失败
           rm -rf Pods/YYKit/Vendor/WebP.framework
 
       - name: 递增 Build Number

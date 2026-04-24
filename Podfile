@@ -61,7 +61,6 @@ post_install do |installer|
             config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
             config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
             config.build_settings['SWIFT_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
-            # 关键：直接关掉 Xcode 的 non-modular-include 错误检查
             config.build_settings['CLANG_WARN_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'NO'
             config.build_settings['OTHER_CFLAGS'] = ['$(inherited)', '-Wno-error', '-w',
                 '-Wno-error=non-modular-include-in-framework-module',
@@ -69,6 +68,14 @@ post_install do |installer|
                 '-Wno-error=implicit-function-declaration',
                 '-Wno-error=return-type',
                 '-Wno-error=objc-root-class']
+            # 移除 YYKit 对旧版 WebP.framework 的链接依赖
+            if target.name == 'YYKit'
+                config.build_settings['OTHER_LDFLAGS'] = ['$(inherited)']
+                frameworks = config.build_settings['FRAMEWORK_SEARCH_PATHS'] || ['$(inherited)']
+                frameworks = [frameworks] if frameworks.is_a?(String)
+                frameworks.reject! { |f| f.include?('Vendor') }
+                config.build_settings['FRAMEWORK_SEARCH_PATHS'] = frameworks
+            end
         end
     end
 end
