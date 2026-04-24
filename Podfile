@@ -34,7 +34,6 @@ target 'PMPlatform_IOS' do
     pod 'MBProgressHUD', :git => 'https://github.com/jdg/MBProgressHUD.git', :commit => '18c442d57398cee5ef57f852df10fc5ff65f0763'
     
     pod 'YYKit', '1.0.9'
-    pod 'libwebp'
     pod 'LEEAlert', '1.4.2'
     pod 'ReactiveObjC', '3.1.1'
     pod 'SSZipArchive', '2.2.2'
