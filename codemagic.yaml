@@ -45,29 +45,27 @@ workflows:
           
       - name: 编译并打包生成 IPA
         script: |
-          xcode-project build-ipa \
-            --workspace "PMPlatform_IOS.xcworkspace" \
-            --scheme "PMPlatform_IOS"
+          # 第一步：只做 Archive，不导出 IPA
+          xcodebuild archive \
+            -workspace "PMPlatform_IOS.xcworkspace" \
+            -scheme "PMPlatform_IOS" \
+            -configuration Release \
+            -archivePath "build/ios/xcarchive/PMPlatform_IOS.xcarchive" \
+            -destination "generic/platform=iOS" \
+            CODE_SIGN_STYLE=Automatic \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            | xcpretty
 
-          # 修复 ITMS-91061：注入 PrivacyInfo.xcprivacy 到各 SDK framework
-          # 旧版 SDK 不含该文件，需要在 IPA 打包后直接注入
-          IPA_PATH="build/ios/ipa/PMPlatform_IOS.ipa"
-          echo "开始注入 PrivacyInfo.xcprivacy，IPA 路径: $IPA_PATH"
-
-          WORK_DIR=$(mktemp -d)
-          cp "$IPA_PATH" "$WORK_DIR/app.ipa"
-          cd "$WORK_DIR"
-          unzip -q app.ipa
-
-          FW_DIR=$(find . -name "Frameworks" -path "*/Payload/*.app/Frameworks" | head -1)
-          echo "Frameworks 目录: $FW_DIR"
-
+          # 第二步：注入 PrivacyInfo.xcprivacy 到 xcarchive 内各 SDK framework
+          # 在签名之前注入，避免破坏签名
+          ARCHIVE_FW="build/ios/xcarchive/PMPlatform_IOS.xcarchive/Products/Applications/PMPlatform_IOS.app/Frameworks"
+          echo "开始注入 PrivacyInfo.xcprivacy，Frameworks 目录: $ARCHIVE_FW"
           INJECTED=0
           for sdk in AFNetworking Alamofire Charts IQKeyboardManager Kingfisher SDWebImage SVProgressHUD SwiftyJSON; do
-            FW="$FW_DIR/${sdk}.framework"
+            FW="$ARCHIVE_FW/${sdk}.framework"
             if [ -d "$FW" ]; then
               if [ ! -f "$FW/PrivacyInfo.xcprivacy" ]; then
-                cp "$OLDPWD/PrivacyManifests/${sdk}.xcprivacy" "$FW/PrivacyInfo.xcprivacy"
+                cp "PrivacyManifests/${sdk}.xcprivacy" "$FW/PrivacyInfo.xcprivacy"
                 echo "✅ 注入: ${sdk}.framework/PrivacyInfo.xcprivacy"
                 INJECTED=$((INJECTED + 1))
               else
@@ -77,17 +75,11 @@ workflows:
               echo "⚠️  未找到: ${sdk}.framework"
             fi
           done
+          echo "共注入 $INJECTED 个 framework"
 
-          if [ $INJECTED -gt 0 ]; then
-            rm -f "$OLDPWD/$IPA_PATH"
-            zip -qr "$OLDPWD/$IPA_PATH" Payload/
-            echo "✅ IPA 重新打包完成，共注入 $INJECTED 个 framework"
-          else
-            echo "ℹ️  所有 framework 已有 PrivacyInfo.xcprivacy，无需重新打包"
-          fi
-
-          cd "$OLDPWD"
-          rm -rf "$WORK_DIR"
+          # 第三步：从注入后的 xcarchive 导出 IPA（Codemagic 会处理签名）
+          xcode-project build-ipa \
+            --archive-path "build/ios/xcarchive/PMPlatform_IOS.xcarchive"
 
     artifacts:
       # 告诉 Codemagic 把生成的 ipa 安装包保存下来
