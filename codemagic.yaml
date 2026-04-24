@@ -49,6 +49,59 @@ workflows:
             --workspace "PMPlatform_IOS.xcworkspace" \
             --scheme "PMPlatform_IOS"
 
+      - name: 修复 ITMS-91061 - 注入 PrivacyInfo.xcprivacy
+        script: |
+          # 找到生成的 IPA 文件
+          IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -1)
+          if [ -z "$IPA_PATH" ]; then
+            echo "❌ 未找到 IPA 文件"
+            exit 1
+          fi
+          echo "IPA 路径: $IPA_PATH"
+
+          # 解压 IPA
+          WORK_DIR=$(mktemp -d)
+          cp "$IPA_PATH" "$WORK_DIR/app.ipa"
+          cd "$WORK_DIR"
+          unzip -q app.ipa
+
+          # 找到 .app/Frameworks 目录
+          FW_DIR=$(find . -name "Frameworks" -path "*/Payload/*.app/Frameworks" | head -1)
+          if [ -z "$FW_DIR" ]; then
+            echo "❌ 未找到 Frameworks 目录"
+            exit 1
+          fi
+          echo "Frameworks 目录: $FW_DIR"
+
+          # 注入 PrivacyInfo.xcprivacy 到各 framework
+          INJECTED=0
+          for sdk in AFNetworking Alamofire Charts IQKeyboardManager Kingfisher SDWebImage SVProgressHUD SwiftyJSON; do
+            FW="$FW_DIR/${sdk}.framework"
+            if [ -d "$FW" ]; then
+              if [ ! -f "$FW/PrivacyInfo.xcprivacy" ]; then
+                cp "$OLDPWD/PrivacyManifests/${sdk}.xcprivacy" "$FW/PrivacyInfo.xcprivacy"
+                echo "✅ 注入: ${sdk}.framework/PrivacyInfo.xcprivacy"
+                INJECTED=$((INJECTED + 1))
+              else
+                echo "ℹ️  已存在: ${sdk}.framework/PrivacyInfo.xcprivacy"
+              fi
+            else
+              echo "⚠️  未找到: ${sdk}.framework"
+            fi
+          done
+
+          # 重新打包 IPA
+          if [ $INJECTED -gt 0 ]; then
+            rm -f "$OLDPWD/$IPA_PATH"
+            zip -qr "$OLDPWD/$IPA_PATH" Payload/
+            echo "✅ IPA 重新打包完成，共注入 $INJECTED 个 framework"
+          else
+            echo "ℹ️  所有 framework 已有 PrivacyInfo.xcprivacy，无需重新打包"
+          fi
+
+          cd "$OLDPWD"
+          rm -rf "$WORK_DIR"
+
     artifacts:
       # 告诉 Codemagic 把生成的 ipa 安装包保存下来
       - build/ios/ipa/*.ipa
