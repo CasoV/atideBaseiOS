@@ -52,15 +52,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		298BA268B758B78E6653733F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 0453823427063C5F1B9AEB0A /* PrivacyInfo.xcprivacy */; };
-		3D8E9F54E9556A407FB7F354 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6089971E9509795E3FFFE67F /* PrivacyInfo.xcprivacy */; };
 		3E4280CA2D79786600E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E4280C92D79786600E4513B /* PrivacyInfo.xcprivacy */; };
-		3E4280D72D797DBE00E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E4280CB2D7978EC00E4513B /* PrivacyInfo.xcprivacy */; };
-		3E4280D82D797DD300E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E4280CD2D79795D00E4513B /* PrivacyInfo.xcprivacy */; };
-		3E4280D92D797DF900E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E4280CF2D7979D600E4513B /* PrivacyInfo.xcprivacy */; };
 		3E4280DA2D797E0A00E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E4280D12D797A6D00E4513B /* PrivacyInfo.xcprivacy */; };
 		3E4280DB2D797E1300E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 46EB2E00005790 /* PrivacyInfo.xcprivacy */; };
-		3E4280DC2D797E1E00E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E4280D52D797B8E00E4513B /* PrivacyInfo.xcprivacy */; };
 		3E4281212D79B43600E4513B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E42811F2D79B40200E4513B /* PrivacyInfo.xcprivacy */; };
 		3E606EE52D76EC13006BAA27 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3E606EE42D76EC13006BAA27 /* PrivacyInfo.xcprivacy */; };
 		46EB2E00005850 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46EB2E00005840 /* Foundation.framework */; };
@@ -1420,8 +1414,6 @@
 		46EB2E0000D3A0 /* Pods-PMPlatform_IOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EB2E0000D390 /* Pods-PMPlatform_IOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		46EB2E0000D400 /* Pods-PMPlatform_IOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 46EB2E0000D3F0 /* Pods-PMPlatform_IOS-dummy.m */; };
 		46EB2E0000D930 /* MBProgressHUD-MBProgressHUD in Resources */ = {isa = PBXBuildFile; fileRef = 6EFB05F1F29FAD078E29A839C5020799 /* MBProgressHUD-MBProgressHUD */; };
-		93E865B7B75A164498EFCB75 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8DF8F1BDB71F6A37A75DADA0 /* PrivacyInfo.xcprivacy */; };
-		EB4AEA4E8B739D21C9214B9D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 35A99B54DC3E82BDFE7E82BD /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -7787,8 +7779,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E4280D72D797DBE00E4513B /* PrivacyInfo.xcprivacy in Resources */,
-				298BA268B758B78E6653733F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7825,8 +7815,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E4280D82D797DD300E4513B /* PrivacyInfo.xcprivacy in Resources */,
-				93E865B7B75A164498EFCB75 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7834,8 +7822,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E4280D92D797DF900E4513B /* PrivacyInfo.xcprivacy in Resources */,
-				3D8E9F54E9556A407FB7F354 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7984,8 +7970,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E4280DC2D797E1E00E4513B /* PrivacyInfo.xcprivacy in Resources */,
-				EB4AEA4E8B739D21C9214B9D /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

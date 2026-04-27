@@ -83,6 +83,11 @@
 @property (nonatomic, weak) NSTimer *timer;
 @property (nonatomic, copy) NSString *videoLimitMin;
 @property (nonatomic, copy) NSString *videoLimitMax;
+@property (nonatomic, copy) NSString *groupCode;
+@property (nonatomic, copy) NSString *recordId;
+@property (nonatomic, copy) NSString *processId;
+@property (nonatomic, copy) NSString *tableCode;
+@property (nonatomic, copy) NSString *callbackKey; // fFileType，用于回调 H5 的方法名
 
 @property (nonatomic, strong) AMapLocationManager *locationManager;
 @property (nonatomic, strong) CLLocation *location;
@@ -748,14 +753,152 @@
             self.videoLimitMax = dic[@"videoLimitMax"];
         }
         self.formId = dic[@"formId"];
-        self.fileType = dic[@"fileType"];
+        self.fileType = dic[@"fileType"];       // 纯 fileType，写入 metaData.fileType
+        self.callbackKey = dic[@"callbackKey"] ?: dic[@"fileType"]; // 回调 key，兼容旧调用
+        self.groupCode = dic[@"groupCode"];
+        self.recordId = dic[@"recordId"];
+        self.processId = dic[@"processId"];
+        self.tableCode = dic[@"tableCode"];
         __weak typeof(self) weakSelf = self;
         TZImagePickerController *imagePickerVc = [[TZImagePickerController alloc] initWithMaxImagesCount:9 delegate:nil];
-        [imagePickerVc setDidFinishPickingPhotosHandle:^(NSArray<UIImage *> *photos, NSArray *assets, BOOL isSelectOriginalPhoto) {
-            [weakSelf uploadImages:photos];
-        }];
-        [imagePickerVc setDidFinishPickingVideoHandle:^(UIImage *coverImage, PHAsset *asset) {
-            [weakSelf uploadVideoPre:asset];
+        // 同时允许选图片和视频（混选）
+        imagePickerVc.allowPickingImage = YES;
+        imagePickerVc.allowPickingVideo = YES;
+        imagePickerVc.allowPickingMultipleVideo = YES;  // 允许图片和视频混选，不互斥
+        imagePickerVc.allowPickingGif = NO;
+        // 使用带完整 asset 信息的回调，支持混选图片+视频
+        [imagePickerVc setDidFinishPickingPhotosWithInfosHandle:^(NSArray<UIImage *> *photos, NSArray *assets, BOOL isSelectOriginalPhoto, NSArray *infos) {
+            NSInteger total = assets.count;
+            if (total == 0) return;
+
+            // 用 dispatch_group 追踪所有上传任务，全部完成后统一回调
+            dispatch_group_t uploadGroup = dispatch_group_create();
+            NSMutableArray *resultList = [NSMutableArray array];
+            for (NSInteger i = 0; i < total; i++) {
+                [resultList addObject:[NSNull null]];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [MBManager showLoading:@"正在上传..."];
+            });
+
+            __block NSString *uploadErrorMsg = nil; // 收集上传过程中的错误信息
+            __block NSInteger photoIndex = 0;       // photos 数组只含图片，单独计数
+
+            for (NSInteger i = 0; i < total; i++) {
+                PHAsset *asset = assets[i];
+                NSInteger idx = i;
+                dispatch_group_enter(uploadGroup);
+
+                if (asset.mediaType == PHAssetMediaTypeVideo) {
+                    PHAssetResource *resource = [[PHAssetResource assetResourcesForAsset:asset] firstObject];
+                    NSString *videoName = resource.originalFilename ?: [NSString stringWithFormat:@"VIDEO_%lld.mp4", (long long)[[NSDate date] timeIntervalSince1970]];
+                    NSString *tmpPath = [NSTemporaryDirectory() stringByAppendingPathComponent:
+                                        [NSString stringWithFormat:@"upload_video_%lld_%ld.mp4",
+                                         (long long)[[NSDate date] timeIntervalSince1970], (long)idx]];
+                    [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
+
+                    PHVideoRequestOptions *videoOptions = [[PHVideoRequestOptions alloc] init];
+                    videoOptions.version = PHVideoRequestOptionsVersionCurrent;
+                    videoOptions.deliveryMode = PHVideoRequestOptionsDeliveryModeHighQualityFormat;
+                    videoOptions.networkAccessAllowed = YES;
+
+                    [[PHImageManager defaultManager] requestAVAssetForVideo:asset options:videoOptions resultHandler:^(AVAsset * _Nullable avAsset, AVAudioMix * _Nullable audioMix, NSDictionary * _Nullable info) {
+                        if (!avAsset) {
+                            NSError *err = info[PHImageErrorKey];
+                            uploadErrorMsg = err.localizedDescription ?: @"视频获取失败，请重试";
+                            dispatch_group_leave(uploadGroup);
+                            return;
+                        }
+                        AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:avAsset presetName:AVAssetExportPresetHighestQuality];
+                        exportSession.outputURL = [NSURL fileURLWithPath:tmpPath];
+                        exportSession.outputFileType = AVFileTypeMPEG4;
+                        exportSession.shouldOptimizeForNetworkUse = YES;
+                        [exportSession exportAsynchronouslyWithCompletionHandler:^{
+                            if (exportSession.status != AVAssetExportSessionStatusCompleted) {
+                                [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
+                                uploadErrorMsg = exportSession.error.localizedDescription ?: @"视频导出失败，请重试";
+                                dispatch_group_leave(uploadGroup);
+                                return;
+                            }
+                            NSData *videoData = [NSData dataWithContentsOfFile:tmpPath];
+                            if (!videoData) {
+                                [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
+                                uploadErrorMsg = @"视频读取失败，请重试";
+                                dispatch_group_leave(uploadGroup);
+                                return;
+                            }
+                            NSDictionary *params = [weakSelf buildUploadParams];
+                            [[HttpManager manager] uploadTask:[UrlConfig URL:filesUpload2] data:videoData name:@"file" fileName:videoName mimeType:@"video/mp4" param:params callback:^(NSURLResponse *response, id data, NSError *error) {
+                                [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
+                                NSString *serverMsg = nil;
+                                NSDictionary *dic = nil;
+                                if ([data isKindOfClass:[NSDictionary class]]) dic = data;
+                                else if ([data isKindOfClass:[NSData class]]) dic = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+                                serverMsg = dic[@"message"];
+                                if (!serverMsg && !error) {
+                                    BIMFile *resultFile = [BIMFile mj_objectWithKeyValues:data];
+                                    if (resultFile.id.length > 0) {
+                                        resultList[idx] = @{@"id": resultFile.id, @"contentType": resultFile.contentType ?: @"video/mp4"};
+                                    } else {
+                                        uploadErrorMsg = @"视频上传失败";
+                                    }
+                                } else {
+                                    uploadErrorMsg = serverMsg ?: @"视频上传失败，请重试";
+                                }
+                                dispatch_group_leave(uploadGroup);
+                            }];
+                        }];
+                    }];
+                } else {
+                    NSInteger currentPhotoIndex = photoIndex;
+                    photoIndex++;
+
+                    if (currentPhotoIndex >= (NSInteger)photos.count || !photos[currentPhotoIndex]) {
+                        uploadErrorMsg = @"图片读取失败";
+                        dispatch_group_leave(uploadGroup);
+                        continue;
+                    }
+
+                    UIImage *image = photos[currentPhotoIndex];
+                    NSData *imageData = UIImageJPEGRepresentation(image, 1);
+                    if (!imageData) {
+                        uploadErrorMsg = @"图片压缩失败";
+                        dispatch_group_leave(uploadGroup);
+                        continue;
+                    }
+                    NSString *fileName = [NSString stringWithFormat:@"IMAGE_%lld_%ld.png", (long long)[[NSDate date] timeIntervalSince1970], (long)idx];
+                    NSDictionary *params = [weakSelf buildUploadParams];
+                    [[HttpManager manager] uploadTask:[UrlConfig URL:filesUpload2] data:imageData name:@"file" fileName:fileName mimeType:@"image/png" param:params callback:^(NSURLResponse *response, id data, NSError *error) {
+                        if (!error && data) {
+                            BIMFile *resultFile = [BIMFile mj_objectWithKeyValues:data];
+                            if (resultFile.id.length > 0) {
+                                resultList[idx] = @{@"id": resultFile.id, @"contentType": resultFile.contentType ?: @"image/png"};
+                            } else {
+                                uploadErrorMsg = @"图片上传失败";
+                            }
+                        } else {
+                            uploadErrorMsg = @"图片上传失败，请重试";
+                        }
+                        dispatch_group_leave(uploadGroup);
+                    }];
+                }
+            }
+
+            // 所有任务完成后统一处理：先 hide loading，再显示错误（如有），最后回调 H5
+            dispatch_group_notify(uploadGroup, dispatch_get_main_queue(), ^{
+                UIView *keyWindow = [UIApplication sharedApplication].keyWindow;
+                NSArray *subviews = [keyWindow.subviews copy];
+                for (UIView *subview in subviews) {
+                    if ([subview isKindOfClass:[MBProgressHUD class]]) {
+                        [(MBProgressHUD *)subview hideAnimated:NO];
+                    }
+                }
+                [MBManager hideAlert];
+                if (uploadErrorMsg) {
+                    [MBManager showBriefAlert:uploadErrorMsg];
+                }
+                [weakSelf callBatchUploadedCallback:resultList];
+            });
         }];
         [self presentViewController:imagePickerVc animated:YES completion:nil];
     } else if([message.name isEqualToString:@"openVideoAlbumByType"]) {
@@ -794,6 +937,11 @@
         }
         self.formId = dic[@"formId"];
         self.fileType = dic[@"fileType"];
+        self.callbackKey = dic[@"callbackKey"] ?: dic[@"fileType"];
+        self.groupCode = dic[@"groupCode"];
+        self.recordId = dic[@"recordId"];
+        self.processId = dic[@"processId"];
+        self.tableCode = dic[@"tableCode"];
         self.faceMark = nil;
         UIImagePickerController *imagePickerVc = [UIImagePickerController new];
         imagePickerVc.delegate = self;
@@ -1201,13 +1349,13 @@
 //            [MBProgressHUD showHUDAddedTo:self.view animated:YES];
 //        return;
 //    }
-//        
+//
 //    if (!keyPath || keyPath.length==0) return;
-//    
+//
 //    NSString *dealString = [keyPath stringByReplacingCharactersInRange:NSMakeRange(0,1) withString:[[keyPath substringToIndex:1] capitalizedString]];
 //    NSString *methodName = [NSString stringWithFormat:@"set%@:",dealString];
 //    SEL setSEL = NSSelectorFromString(methodName);
-//    
+//
 //    if (object == self.quickJoinView || object == self.testLoginView) {
 //        if(![self.viewModel respondsToSelector:setSEL]) return;
 //        ((void(*)(id, SEL, id))objc_msgSend)(self.viewModel, setSEL, [change valueForKey:@"new"]);
@@ -1218,7 +1366,7 @@
 //            ((void(*)(id, SEL, id))objc_msgSend)(self.arrangeView, setSEL, [change valueForKey:@"new"]);
 //        }
 //    }
-//    
+//
 //    NSArray *tmp = @[@"quickJoinRoomID", @"quickJoinName", @"roomType", @"role"];
 //    if ([tmp containsObject:keyPath]) {
 //        BOOL haveRoomType = YES;
@@ -1237,7 +1385,7 @@
 //    [self addObservers];
 //    NSArray *data = self.viewModel.arrangeData;
 //    self.viewModel.arrangeData = data;
-//    
+//
 //    @ZegoWeak(self)
 //    //快速加入
 //    self.quickJoinView.quickJoinBlock = ^{
@@ -1250,7 +1398,7 @@
 //        TLManager.sharedInstance.userName = [UserInfo getInstance].name;
 //        [self quickJoinMeeting];
 //    };
-//    
+//
 //    //测试登录
 //    self.testLoginView.testLoginBlock = ^{
 //        @ZegoStrong(self)
@@ -1261,13 +1409,13 @@
 //        [self.view endEditing:YES];
 //        [self startTestLoginWithUserID:self.viewModel.testLoginId];
 //    };
-//    
+//
 //    //自动登录
 //    self.quickJoinView.createBlock = ^{
 //        @ZegoStrong(self)
 //        [self startLogin:NO];
 //    };
-//    
+//
 //    //安排会议
 //    self.arrangeView.arrangeblock = ^(NSDictionary * _Nonnull selectedData){
 //        @ZegoStrong(self)
@@ -1279,13 +1427,13 @@
 //        [self createMeeting:tmp];
 //#endif
 //    };
-//    
+//
 //    //删除会议
 //    self.mainView.closeMeetingBlock = ^(NSDictionary * _Nullable x) {
 //        @ZegoStrong(self)
 //        [self deleteMeeting:x];
 //    };
-//    
+//
 //    //加入会议
 //    self.mainView.joinMeetingBlock = ^(NSDictionary * _Nullable x) {
 //        @ZegoStrong(self)
@@ -1305,7 +1453,7 @@
 //        @ZegoStrong(self)
 //        [self getMeetingList];
 //    };
-//    
+//
 //    // 选择房间类型
 //    self.quickJoinView.selectTypeBlock = ^{
 //        @ZegoStrong(self)
@@ -1317,7 +1465,7 @@
 //            [self.quickJoinView setRoomTypeTitle:[self typeTitleOfIndex:index]];
 //        };
 //    };
-//    
+//
 //    // 选择角色
 //    self.quickJoinView.selectRoleBlock = ^{
 //        @ZegoStrong(self)
@@ -1329,7 +1477,7 @@
 //            [self.quickJoinView setRoleTitle:[self roleTitleOfIndex:index]];
 //        };
 //    };
-//    
+//
 //#ifdef ZEGO_ACCESS_ENV_FLAG
 //    // 选择接入环境
 //    self.selectEnvView.selectEnvBlock = ^(NSInteger env) {
@@ -1388,29 +1536,29 @@
 //                [self joinMeeting:info];
 //                //开启直播
 //                [[HttpManager manager]jsonPost:[NSString stringWithFormat:@"%@/%@",[UrlConfig URL:liveStart],dic[@"data"]] param:@{}success:^(NSData *data) {
-//                    
+//
 //                    //开启录播
 //                    [[HttpManager manager]jsonPost:[NSString stringWithFormat:@"%@/%@",[UrlConfig URL:recordStart],dic[@"data"]] param:@{}success:^(NSData *data) {
-//                        
-//                        
+//
+//
 //                    } faild:^(NSString *msg) {
-//                        
+//
 //                    }];
-//                    
-//                    
+//
+//
 //                } faild:^(NSString *msg) {
-//                    
+//
 //                }];
 //                                }
-//                
+//
 //            } faild:^(NSString *msg) {
-//                
+//
 //            }];
-//            
-//    
-//            
+//
+//
+//
 //        }
-//       
+//
 //    } failure:^(NSError * _Nonnull error) {
 //        [self.mainView endRefresh];
 //        if (error.code == 4000007) {
@@ -1433,18 +1581,18 @@
 //        for (NSDictionary *dic in arr) {
 //            if([dic[@"roomId"] isEqualToString:roomID]){
 //                //删除直播间
-//                
+//
 //                [[HttpManager manager]jsonPost:[NSString stringWithFormat:@"%@/%@",[UrlConfig URL:liveDelete],dic[@"id"]] param:@{}success:^(NSData *data) {
 //                } faild:^(NSString *msg) {
-//                    
+//
 //                }];
-//                
+//
 //            }
 //        }
-//  
-//    
+//
+//
 //} faild:^(NSString *msg) {
-//    
+//
 //}];
 
 #pragma mark - 百度OCR回调设置
@@ -1690,6 +1838,59 @@
     };
 }
 
+#pragma mark - 构建上传参数
+- (NSDictionary *)buildUploadParams {
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    if (self.formId) {
+        params[@"metaData.formId"] = self.formId;
+    }
+    if (self.fileType) {
+        params[@"metaData.fileType"] = self.fileType;
+    }
+    if (self.groupCode && self.groupCode.length > 0) {
+        params[@"metaData.groupCode"] = self.groupCode;
+    }
+    if (self.recordId && self.recordId.length > 0) {
+        params[@"metaData.recordId"] = self.recordId;
+    }
+    if (self.processId && self.processId.length > 0) {
+        params[@"metaData.processId"] = self.processId;
+    }
+    if (self.tableCode && self.tableCode.length > 0) {
+        params[@"metaData.tableCode"] = self.tableCode;
+    }
+    if (self.videoLimitMax) {
+        params[@"videoLimitMax"] = self.videoLimitMax;
+    }
+    if (self.videoLimitMin) {
+        params[@"videoLimitMin"] = self.videoLimitMin;
+    }
+    return [params copy];
+}
+
+#pragma mark - 批量上传完成后统一回调 H5
+- (void)callBatchUploadedCallback:(NSArray *)resultList {
+    NSMutableArray *validResults = [NSMutableArray array];
+    for (id item in resultList) {
+        if (![item isKindOfClass:[NSNull class]]) {
+            [validResults addObject:item];
+        }
+    }
+    if (validResults.count == 0) return;
+
+    NSError *jsonError = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:validResults options:0 error:&jsonError];
+    if (jsonError || !jsonData) return;
+
+    NSString *jsonStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    jsonStr = [jsonStr stringByReplacingOccurrencesOfString:@"'" withString:@"\\'"];
+
+    // 用 callbackKey（即 fFileType）拼方法名，与 H5 注册的 window["filesUploaded"+fFileType] 对应
+    NSString *key = self.callbackKey ?: self.fileType;
+    NSString *jsString = [NSString stringWithFormat:@"filesUploaded%@('%@')", key, jsonStr];
+    [_webView evaluateJavaScript:jsString completionHandler:^(id result, NSError * _Nullable error) {}];
+}
+
 #pragma mark - 上传照片
 - (void)uploadImages:(NSArray <UIImage *>*)images {
     self.imageUploadCount = images.count;
@@ -1697,42 +1898,36 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [MBManager showLoading:@"正在上传..."];
     });
-    
-    NSDictionary *params = nil;
-    if (self.fileType != nil) {
-        params = @{
-            @"metaData.formId": self.formId,
-            @"metaData.fileType": self.fileType
-        };
-    } else {
-        params = @{
-            @"metaData.formId": self.formId
-        };
+
+    // 每张图片独立构建 params，避免共享字典的并发问题
+    __block NSMutableArray *resultList = [NSMutableArray array];
+    for (NSInteger i = 0; i < images.count; i++) {
+        [resultList addObject:[NSNull null]];
     }
     __weak typeof(self) weakSelf = self;
-    for (UIImage *image in images) {
-        NSString *fileName = [NSString stringWithFormat:@"IMAGE_%lld.png", (long long)[[NSDate date] timeIntervalSince1970]];
+    for (NSInteger i = 0; i < images.count; i++) {
+        NSInteger idx = i;
+        UIImage *image = images[i];
+        NSString *fileName = [NSString stringWithFormat:@"IMAGE_%lld_%ld.png", (long long)[[NSDate date] timeIntervalSince1970], (long)idx];
+        NSDictionary *params = [self buildUploadParams]; // 每次调用返回新字典
         [[HttpManager manager] uploadTask:[UrlConfig URL:filesUpload2] data:UIImageJPEGRepresentation(image, 1) name:@"file" fileName:fileName mimeType:@"image/png" param:params callback:^(NSURLResponse *response, id data, NSError *error) {
-            weakSelf.imageUploadedCount++;
-//            if (weakSelf.imageUploadedCount >= weakSelf.imageUploadCount) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [MBManager hideAlert];
-                });
-//            NSString *dic = [data mj_JSONString];
-                BIMFile *resultFile = [BIMFile mj_objectWithKeyValues:data];
-                NSString *jsString = nil;
-                if (weakSelf.fileType != nil) {
-                    jsString = [NSString stringWithFormat:@"fileUploaded%@('%@','%@','%@')", weakSelf.fileType, resultFile.id, resultFile.contentType, weakSelf.fileType];
-                } else {
-                    jsString = [NSString stringWithFormat:@"fileUploaded('%@','%@')", resultFile.id, resultFile.contentType];
-                }
-                [_webView evaluateJavaScript:jsString completionHandler:^(id result, NSError * _Nullable error) {
-                    if (error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                weakSelf.imageUploadedCount++;
+                if (!error && data) {
+                    BIMFile *resultFile = [BIMFile mj_objectWithKeyValues:data];
+                    if (resultFile.id.length > 0) {
+                        resultList[idx] = @{@"id": resultFile.id, @"contentType": resultFile.contentType ?: @"image/png"};
+                    } else {
+                        [MBManager showBriefAlert:@"图片上传失败"];
                     }
-                }];
-//            }
-            if (error) {
-            }
+                } else {
+                    [MBManager showBriefAlert:@"图片上传失败，请重试"];
+                }
+                if (weakSelf.imageUploadedCount >= weakSelf.imageUploadCount) {
+                    [MBManager hideAlert];
+                    [weakSelf callBatchUploadedCallback:resultList];
+                }
+            });
         }];
     }
 }
@@ -1768,74 +1963,95 @@
 #pragma mark - 上传视频
 - (void)uploadVideoPre:(PHAsset *)asset {
     PHAssetResource *resource = [[PHAssetResource assetResourcesForAsset:asset] firstObject];
-    self.videoName = resource.originalFilename;
-    PHVideoRequestOptions *options = [[PHVideoRequestOptions alloc] init];
-    options.version = PHImageRequestOptionsVersionCurrent;
-    options.deliveryMode = PHVideoRequestOptionsDeliveryModeAutomatic;
-    __weak typeof(self) weakSelf = self;
-    [[PHImageManager defaultManager] requestAVAssetForVideo:asset options:options resultHandler:^(AVAsset * _Nullable asset, AVAudioMix * _Nullable audioMix, NSDictionary * _Nullable info) {
-        AVURLAsset *urlAsset = (AVURLAsset *)asset;
-        [weakSelf uploadVideo:urlAsset.URL fileName:weakSelf.videoName];
-    }];
-}
+    NSString *videoName = resource.originalFilename ?: [NSString stringWithFormat:@"VIDEO_%lld.mp4", (long long)[[NSDate date] timeIntervalSince1970]];
+    NSString *tmpPath = [NSTemporaryDirectory() stringByAppendingPathComponent:
+                         [NSString stringWithFormat:@"upload_video_%lld.mp4", (long long)[[NSDate date] timeIntervalSince1970]]];
+    [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
 
-- (void)uploadVideo:(NSURL *)url fileName:(NSString *)fileName {
     dispatch_async(dispatch_get_main_queue(), ^{
         [MBManager showLoading:@"正在上传..."];
     });
-    NSDictionary *params = nil;
-    if (self.fileType != nil) {
-        params = @{
-            @"metaData.formId": self.formId,
-            @"metaData.fileType": self.fileType
-        };
-    } else {
-        params = @{
-            @"metaData.formId": self.formId
-        };
-    }
-    if(self.videoLimitMax != nil){
-        NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:params];
-        dic[@"videoLimitMax"] = self.videoLimitMax;
-        params = [NSMutableDictionary dictionaryWithDictionary:dic];
-    }
-    if(self.videoLimitMin != nil){
-        NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:params];
-        dic[@"videoLimitMin"] = self.videoLimitMin;
-        params = [NSMutableDictionary dictionaryWithDictionary:dic];
-    }
+
+    PHVideoRequestOptions *videoOptions = [[PHVideoRequestOptions alloc] init];
+    videoOptions.version = PHVideoRequestOptionsVersionCurrent;
+    videoOptions.deliveryMode = PHVideoRequestOptionsDeliveryModeHighQualityFormat;
+    videoOptions.networkAccessAllowed = YES;
+
     __weak typeof(self) weakSelf = self;
-    [[HttpManager manager] uploadTask:[UrlConfig URL:filesUpload2] data:[NSData dataWithContentsOfURL:url] name:@"file" fileName:fileName mimeType:@"video/mp4" param:params callback:^(NSURLResponse *response, id data, NSError *error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [MBManager hideAlert];
-        });
-        NSHTTPURLResponse *httpResponse = (id) response;
-        NSInteger statusCode = httpResponse.statusCode;
-        if(statusCode == 500 && error){
-            NSString * const AFNetworkingOperationFailingURLResponseDataErrorKey = @"com.alamofire.serialization.response.error.data";
-            NSData *errorData = error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey];
-            NSDictionary *serializedData = [NSJSONSerialization JSONObjectWithData:errorData
-                                                                               options:kNilOptions
-                                                                                 error:nil];
+    [[PHImageManager defaultManager] requestAVAssetForVideo:asset options:videoOptions resultHandler:^(AVAsset * _Nullable avAsset, AVAudioMix * _Nullable audioMix, NSDictionary * _Nullable info) {
+        if (!avAsset) {
+            NSError *err = info[PHImageErrorKey];
             dispatch_async(dispatch_get_main_queue(), ^{
-                [MBManager showBriefAlert:serializedData[@"message"]];
+                [MBManager hideAlert];
+                [MBManager showBriefAlert:err.localizedDescription ?: @"视频获取失败，请重试"];
             });
             return;
         }
-        
-        BIMFile *resultFile = [BIMFile mj_objectWithKeyValues:data];
-        NSString *jsString = nil;
-        if (weakSelf.fileType != nil) {
-            jsString = [NSString stringWithFormat:@"videoUploaded%@('%@','%@','%@')", weakSelf.fileType, resultFile.id, resultFile.contentType, weakSelf.fileType];
-        } else {
-            jsString = [NSString stringWithFormat:@"videoUploaded('%@','%@')", resultFile.id, resultFile.contentType];
-        }
-        [_webView evaluateJavaScript:jsString completionHandler:^(id result, NSError * _Nullable error) {
-            if (error) {
+        AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:avAsset presetName:AVAssetExportPresetHighestQuality];
+        exportSession.outputURL = [NSURL fileURLWithPath:tmpPath];
+        exportSession.outputFileType = AVFileTypeMPEG4;
+        exportSession.shouldOptimizeForNetworkUse = YES;
+        [exportSession exportAsynchronouslyWithCompletionHandler:^{
+            if (exportSession.status == AVAssetExportSessionStatusCompleted) {
+                [weakSelf uploadVideoFromPath:tmpPath fileName:videoName];
+            } else {
+                [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
+                NSString *errMsg = exportSession.error.localizedDescription ?: @"视频导出失败，请重试";
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [MBManager hideAlert];
+                    [MBManager showBriefAlert:errMsg];
+                });
             }
         }];
-        if (error) {
-        }
+    }];
+}
+
+- (void)uploadVideoFromPath:(NSString *)filePath fileName:(NSString *)fileName {
+    NSData *videoData = [NSData dataWithContentsOfFile:filePath];
+    if (!videoData) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [MBManager hideAlert];
+            [MBManager showBriefAlert:@"视频读取失败，请重试"];
+        });
+        [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+        return;
+    }
+    NSDictionary *params = [self buildUploadParams];
+    __weak typeof(self) weakSelf = self;
+    [[HttpManager manager] uploadTask:[UrlConfig URL:filesUpload2] data:videoData name:@"file" fileName:fileName mimeType:@"video/mp4" param:params callback:^(NSURLResponse *response, id data, NSError *error) {
+        [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [MBManager hideAlert];
+
+            // 从 data 里解析服务端返回的 message（500 时 error 有值但错误信息在 data 里）
+            NSString *(^parseMsg)(id) = ^NSString *(id d) {
+                if (!d) return nil;
+                NSDictionary *dic = nil;
+                if ([d isKindOfClass:[NSDictionary class]]) {
+                    dic = d;
+                } else if ([d isKindOfClass:[NSData class]]) {
+                    dic = [NSJSONSerialization JSONObjectWithData:d options:0 error:nil];
+                }
+                return dic[@"message"];
+            };
+
+            NSString *serverMsg = parseMsg(data);
+            if (serverMsg) {
+                [MBManager showBriefAlert:serverMsg];
+                return;
+            }
+            if (error) {
+                [MBManager showBriefAlert:@"视频上传失败，请重试"];
+                return;
+            }
+            BIMFile *resultFile = [BIMFile mj_objectWithKeyValues:data];
+            if (resultFile.id.length == 0) {
+                [MBManager showBriefAlert:@"视频上传失败，请重试"];
+                return;
+            }
+            NSArray *resultList = @[@{@"id": resultFile.id, @"contentType": resultFile.contentType ?: @"video/mp4"}];
+            [weakSelf callBatchUploadedCallback:resultList];
+        });
     }];
 }
 
@@ -1924,7 +2140,8 @@
             [self uploadImages:@[image]];
         }
     } else if (url != nil) {
-        [self uploadVideo:url fileName:[NSString stringWithFormat:@"VIDEO_%lld.MOV", (long long)[[NSDate date] timeIntervalSince1970]]];
+        NSString *fileName = [NSString stringWithFormat:@"VIDEO_%lld.MOV", (long long)[[NSDate date] timeIntervalSince1970]];
+        [self uploadVideoFromPath:url.path fileName:fileName];
     }
     [picker dismissViewControllerAnimated:YES completion:NULL];
 }

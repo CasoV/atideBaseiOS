@@ -49,6 +49,18 @@ pre_install do |installer|
 end
 
 post_install do |installer|
+    # 修复 ITMS-91061：为旧版 SDK 指定 PrivacyInfo.xcprivacy 路径
+    # 通过 PRIVACY_MANIFEST_FILE build setting 告知 Xcode 该文件的位置
+    privacy_sdks = %w[Charts IQKeyboardManager Kingfisher SwiftyJSON]
+    installer.pods_project.targets.each do |target|
+        if privacy_sdks.include?(target.name)
+            target.build_configurations.each do |config|
+                config.build_settings['PRIVACY_MANIFEST_FILE'] = "$(PODS_ROOT)/#{target.name}/PrivacyInfo.xcprivacy"
+            end
+            puts "✅ #{target.name}: 已设置 PRIVACY_MANIFEST_FILE"
+        end
+    end
+
     installer.pods_project.targets.each do |target|
         target.build_configurations.each do |config|
             config.build_settings['SWIFT_VERSION'] = '5.0'
