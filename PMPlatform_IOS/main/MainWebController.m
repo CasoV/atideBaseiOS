@@ -140,7 +140,13 @@
         self.s_h = kScreen_Width;
     }
     
-    _webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, kStatusBarH, kScreen_Width, kScreen_Height - kStatusBarH - safeBottom)];
+    WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
+    // 允许内联播放 video，防止自动全屏（核心配置）
+    config.allowsInlineMediaPlayback = YES;
+    // 不强制要求用户手势才能启动媒体
+    config.mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+
+    _webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, kStatusBarH, kScreen_Width, kScreen_Height - kStatusBarH - safeBottom) configuration:config];
     _webView.multipleTouchEnabled = YES;
     _webView.UIDelegate = self;
     _webView.navigationDelegate = self;
@@ -1128,6 +1134,14 @@
     }];
 }
 #pragma mark - WKUIDelegate
+- (void)webView:(WKWebView *)webView
+    requestMediaCapturePermissionForOrigin:(WKSecurityOrigin *)origin
+    initiatedByFrame:(WKFrameInfo *)frame
+    type:(WKMediaCaptureType)type
+    decisionHandler:(void (^)(WKPermissionDecision))decisionHandler
+    API_AVAILABLE(ios(15.0)) {
+    decisionHandler(WKPermissionDecisionGrant);
+}
 - (void)webView:(WKWebView *)webView didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler {
     
     if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
